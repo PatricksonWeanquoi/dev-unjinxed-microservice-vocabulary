@@ -28,3 +28,6 @@ HELP.md
 *.iws
 *.iml
 *.ipr
+
+#Resources ignore
+*/main/resources/application.properties
