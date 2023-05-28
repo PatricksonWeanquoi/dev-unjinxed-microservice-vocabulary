@@ -7,12 +7,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class BeanConfig {
-//    @Bean
-//    @Qualifier("httpBaseImpl")
-//    public HttpClientBaseImpl httpBaseImpl () {
-//        return new HttpClientBaseImpl();
-//    }
-//
     @Bean
     @Qualifier("restTemplate")
     public RestTemplate restTemplate () {

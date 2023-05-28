@@ -35,6 +35,7 @@ public class OxfordDictionariesServiceImpl implements OxfordDictionariesService 
                 ).onErrorResume(RequestEntityBuilderException.class, e -> Mono.just(ServerResponse
                         .status(500)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(Mono.just(e.getMessage()), new ParameterizedTypeReference<Mono<Object>>(){})));
+                        .body(Mono.just(e.getMessage()), new ParameterizedTypeReference<Mono<Object>>(){}))
+                );
     }
 }

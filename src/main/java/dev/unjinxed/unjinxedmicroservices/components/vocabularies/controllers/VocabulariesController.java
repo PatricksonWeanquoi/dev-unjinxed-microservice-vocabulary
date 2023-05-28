@@ -18,18 +18,13 @@ public class VocabulariesController {
     RandomWordsService randomWordsService;
     @Autowired
     OxfordDictionariesService oxfordDictionariesService;
-
     @Autowired
     VocabularyConstructService vocabularyConstructService;
     @Bean
     public RouterFunction<ServerResponse> vocabulariesRoutes() {
         return RouterFunctions.route()
                 .GET("/vocabularies/get-a-word", accept(MediaType.APPLICATION_JSON),
-                        request -> {
-                            return randomWordsService.getRandomWordServerResponse().blockOptional().get();
-                        }
-
-                )
+                        request -> randomWordsService.getRandomWordServerResponse().blockOptional().get())
                 .GET("/vocabularies/definition/{word}", accept(MediaType.APPLICATION_JSON),
                         request -> {
                             String word = request.pathVariable("word");
@@ -37,10 +32,7 @@ public class VocabulariesController {
                         }
                 )
                 .GET("/vocabularies/definition", accept(MediaType.APPLICATION_JSON),
-                        request -> {
-                            return this.vocabularyConstructService.getRandomWordDefinitionServerResponse().blockOptional().get();
-                        }
-                )
+                        request -> this.vocabularyConstructService.getRandomWordDefinitionServerResponse().blockOptional().get())
                 .build();
     }
 }
