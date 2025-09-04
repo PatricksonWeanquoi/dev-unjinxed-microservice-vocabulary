@@ -1,8 +1,9 @@
 package dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.randomwords;
 
-import dev.unjinxed.unjinxedmicroservices.components.vocabularies.adapters.randomwordsadapter.RandomWordsAdapter;
-import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.randomwords.RandomWordsResponse;
-import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.randomwords.impl.RandomWordsServiceImpl;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.adapters.wordsapiadapter.WordsAPIAdapter;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.enums.WordEnum;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.wordsapi.WordResponse;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.randomwords.impl.WordsAPIServiceImpl;
 import dev.unjinxed.unjinxedmicroservices.exceptions.RequestEntityBuilderException;
 import dev.unjinxed.unjinxedmicroservices.utils.MockitoInit;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -24,19 +25,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
 @DisplayName("Test-Case: Random Words Service")
-class RandomWordsServiceTest extends MockitoInit {
+class WordsAPIServiceTest extends MockitoInit {
     @Mock
-    RandomWordsAdapter randomWordsAdapter;
+    WordsAPIAdapter randomWordsAdapter;
     @InjectMocks
-    RandomWordsServiceImpl randomWordsService;
+    WordsAPIServiceImpl randomWordsService;
 
 
     @DisplayName("Get Random Word Success Test")
     @ParameterizedTest
     @MethodSource("successResponses")
-    void getRandomWordSuccessTest(RandomWordsResponse randomWordsResponse, String word) {
-        Mockito.when(randomWordsAdapter.getRandomWord()).thenReturn(Mono.just(randomWordsResponse));
-        Mono<RandomWordsResponse> randomWordsResponseMono = randomWordsService.getRandomWord();
+    void getRandomWordSuccessTest(WordResponse randomWordsResponse, String word) {
+        Mockito.when(randomWordsAdapter.getWord(WordEnum.RANDOM, null)).thenReturn(Mono.just(randomWordsResponse));
+        Mono<WordResponse> randomWordsResponseMono = randomWordsService.getRandomWord();
         StepVerifier.create(randomWordsResponseMono)
                 .assertNext((randomWordsResp -> {
                     assertThat("Random Words Response is not null", randomWordsResp, is(notNullValue()));
@@ -48,8 +49,8 @@ class RandomWordsServiceTest extends MockitoInit {
     @DisplayName("Get Random Word Success Server Response Test")
     @ParameterizedTest
     @MethodSource("successResponses")
-    void getRandomWordSuccessServerResponseTest(RandomWordsResponse randomWordsResponse) {
-        Mockito.when(randomWordsAdapter.getRandomWord()).thenReturn(Mono.just(randomWordsResponse));
+    void getRandomWordSuccessServerResponseTest(WordResponse randomWordsResponse) {
+        Mockito.when(randomWordsAdapter.getWord(WordEnum.RANDOM, null)).thenReturn(Mono.just(randomWordsResponse));
         Mono<ServerResponse> serverResponseMono = randomWordsService.getRandomWordServerResponse();
         StepVerifier.create(serverResponseMono)
                 .assertNext((serverResponse -> {
@@ -63,7 +64,7 @@ class RandomWordsServiceTest extends MockitoInit {
     @ParameterizedTest
     @MethodSource("exceptionResponses")
     void getRandomWordExceptionServerResponseTest(Throwable exception, Integer statusCode) {
-        Mockito.when(randomWordsAdapter.getRandomWord()).thenReturn(Mono.error(exception));
+        Mockito.when(randomWordsAdapter.getWord(WordEnum.RANDOM, null)).thenReturn(Mono.error(exception));
         Mono<ServerResponse> serverResponseMono = randomWordsService.getRandomWordServerResponse();
         StepVerifier.create(serverResponseMono)
                 .assertNext((serverResponse -> {
@@ -75,7 +76,7 @@ class RandomWordsServiceTest extends MockitoInit {
 
     static Stream<Arguments> successResponses() {
         return Stream.of(
-                Arguments.of(RandomWordsResponse.builder()
+                Arguments.of(WordResponse.builder()
                                     .word("unjinxed")
                                 .build(),
                 "unjinxed")

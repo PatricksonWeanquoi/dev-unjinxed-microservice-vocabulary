@@ -1,10 +1,10 @@
 package dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.vocabularyconstruct;
 
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.oxforddictionaries.*;
-import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.randomwords.RandomWordsResponse;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.wordsapi.WordResponse;
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.vocabularycontruct.WordDefinition;
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.oxforddictionaries.OxfordDictionariesService;
-import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.randomwords.RandomWordsService;
+import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.randomwords.WordsAPIService;
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.vocabularyconstruct.impl.VocabularyConstructServiceImpl;
 import dev.unjinxed.unjinxedmicroservices.exceptions.RequestEntityBuilderException;
 import dev.unjinxed.unjinxedmicroservices.utils.MockitoInit;
@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 @Slf4j
 class VocabularyConstructServiceTest extends MockitoInit {
     @Mock
-    RandomWordsService randomWordsService;
+    WordsAPIService randomWordsService;
     @Mock
     OxfordDictionariesService oxfordDictionariesService;
     @InjectMocks
@@ -43,7 +43,7 @@ class VocabularyConstructServiceTest extends MockitoInit {
     @ParameterizedTest
     @MethodSource("successResponses")
     void getRandomWordDefinitionSuccessTest(OxfordDictionariesResponse oxfordDictionariesResponse,
-                                            RandomWordsResponse randomWordsResponse, String word) {
+                                            WordResponse randomWordsResponse, String word) {
         Mockito.when(oxfordDictionariesService.getWordDefinition(word)).thenReturn(Mono.just(oxfordDictionariesResponse));
         Mockito.when(randomWordsService.getRandomWord()).thenReturn(Mono.just(randomWordsResponse));
         Mono<WordDefinition> wordDefinitionMono = vocabularyConstructService.getRandomWordDefinition();
@@ -63,7 +63,7 @@ class VocabularyConstructServiceTest extends MockitoInit {
     @ParameterizedTest
     @MethodSource("successResponses")
     void getRandomWordDefinitionSuccessServerResponseTest(OxfordDictionariesResponse oxfordDictionariesResponse,
-                                            RandomWordsResponse randomWordsResponse, String word) {
+                                                          WordResponse randomWordsResponse, String word) {
         Mockito.when(oxfordDictionariesService.getWordDefinition(word)).thenReturn(Mono.just(oxfordDictionariesResponse));
         Mockito.when(randomWordsService.getRandomWord()).thenReturn(Mono.just(randomWordsResponse));
         Mono<ServerResponse> serverResponseMono = vocabularyConstructService.getRandomWordDefinitionServerResponse();
@@ -79,7 +79,7 @@ class VocabularyConstructServiceTest extends MockitoInit {
     @ParameterizedTest
     @MethodSource("successResponses")
     void getRandomWordDefinitionNullWordDefinitionExceptionTest(OxfordDictionariesResponse oxfordDictionariesResponse,
-                                                          RandomWordsResponse randomWordsResponse, String word) {
+                                                                WordResponse randomWordsResponse, String word) {
         oxfordDictionariesResponse.getResults().get(0).getLexicalEntries().get(0).setLexicalCategory(null);
         Mockito.when(oxfordDictionariesService.getWordDefinition(word)).thenReturn(Mono.just(oxfordDictionariesResponse));
         Mockito.when(randomWordsService.getRandomWord()).thenReturn(Mono.just(randomWordsResponse));
@@ -123,14 +123,14 @@ class VocabularyConstructServiceTest extends MockitoInit {
                                                                         .build()))
                                                                 .build()))
                                                         .build()))
-                                                        .lexicalCategory(OxfordDictionarieslexicalCategory.builder()
-                                                                .text("Noun")
-                                                                .build())
+                                                .lexicalCategory(OxfordDictionarieslexicalCategory.builder()
+                                                    .text("Noun")
+                                                    .build())
                                                 .build()))
                                         .build()))
                                 .word("unjinxed")
                                 .build(),
-                        RandomWordsResponse.builder()
+                        WordResponse.builder()
                                 .word("unjinxed")
                                 .build(),
                         "unjinxed")

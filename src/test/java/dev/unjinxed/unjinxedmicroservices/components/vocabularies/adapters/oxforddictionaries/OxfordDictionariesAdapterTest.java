@@ -4,7 +4,6 @@ import dev.unjinxed.unjinxedmicroservices.components.vocabularies.adapters.oxfor
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.oxforddictionaries.OxfordDictionariesResponse;
 import dev.unjinxed.unjinxedmicroservices.exceptions.RequestEntityBuilderException;
 import dev.unjinxed.unjinxedmicroservices.utils.MockitoInit;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +13,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.LinkedMultiValueMap;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -29,7 +26,7 @@ import static org.mockito.Mockito.doReturn;
 
 @DisplayName("Test-Case: Oxford Dictionaries Adapter")
 @ExtendWith(SpringExtension.class)
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application.yml")
 class OxfordDictionariesAdapterTest extends MockitoInit{
     OxfordDictionariesAdapterImpl oxfordDictionariesAdapterImpl;
     @Value("${oxfordDictionaries.url}")
@@ -46,7 +43,7 @@ class OxfordDictionariesAdapterTest extends MockitoInit{
     @ParameterizedTest
     @MethodSource("responses")
     @DisplayName("Get Word Definition Get Success Definition")
-    void getWordDefinitionGetSuccessDefinitionTest(Mono<Object> responseInput) {
+    void getWordDefinitionGetSuccessDefinitionTest(Mono<OxfordDictionariesResponse> responseInput) {
         doReturn(responseInput).when((oxfordDictionariesAdapterImpl)).triggerServiceCallOut(any(), any());
         Mono<OxfordDictionariesResponse> oxfordDictionariesResponseMono = oxfordDictionariesAdapterImpl.getWordDefinition("test");
         StepVerifier.create(oxfordDictionariesResponseMono)
@@ -65,7 +62,7 @@ class OxfordDictionariesAdapterTest extends MockitoInit{
 
     static Stream<Arguments> responses() {
         return Stream.of(
-                Arguments.of(Mono.just(new ResponseEntity<>(OxfordDictionariesResponse.builder().build(), new LinkedMultiValueMap<>(), 200)))
+                Arguments.of(Mono.just(OxfordDictionariesResponse.builder().build()))
         );
     }
 }

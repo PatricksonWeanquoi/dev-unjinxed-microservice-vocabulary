@@ -30,4 +30,4 @@ HELP.md
 *.ipr
 
 #Resources ignore
-*/main/resources/application.properties
+src/main/resources/application.yml

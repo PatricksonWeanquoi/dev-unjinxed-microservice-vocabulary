@@ -1,8 +1,8 @@
 package dev.unjinxed.unjinxedmicroservices.constants;
 
-public class GLOBALCONSTANTS {
+public class GlobalConstants {
 
-    private GLOBALCONSTANTS() {
+    private GlobalConstants() {
         throw new IllegalStateException("Utility class; Cannot be instantiated");
     }
 

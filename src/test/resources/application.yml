@@ -1,0 +1,18 @@
+
+#oxfordDictionaries
+oxfordDictionaries:
+  url: https://od-api-sandbox.oxforddictionaries.com/api/v2
+  app_id: 123
+  app_key: 9656788
+
+rapidApi:
+  xRapidAPIKey: 8340
+  wordsApi:
+    xRapidAPIHost: wordsapiv1.p.rapidapi.com
+    xRapidAPIDomain: https://wordsapiv1.p.rapidapi.com
+  twinwordGraphDictionary:
+    xRapidAPIHost: twinword-word-graph-dictionary.p.rapidapi.com
+    xRapidAPIDomain: https://twinword-word-graph-dictionary.p.rapidapi.com
+
+vocabulary:
+  maxAttempts: 10
