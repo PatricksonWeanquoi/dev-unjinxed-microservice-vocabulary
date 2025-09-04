@@ -28,3 +28,6 @@ HELP.md
 *.iws
 *.iml
 *.ipr
+
+#Resources ignore
+src/main/resources/application.yml

@@ -6,10 +6,9 @@ import dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.oxfor
 import dev.unjinxed.unjinxedmicroservices.exceptions.RequestEntityBuilderException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 @Service
 public class OxfordDictionariesServiceImpl implements OxfordDictionariesService {
@@ -23,18 +22,16 @@ public class OxfordDictionariesServiceImpl implements OxfordDictionariesService 
 
     public Mono<ServerResponse> getWordDefinitionServerResponse(String word) {
         return this.getWordDefinition(word)
-                .map(oxfordDictionariesResponse -> ServerResponse
+                .flatMap(oxfordDictionariesResponse -> ServerResponse
                             .ok()
-                            .contentType(MediaType.APPLICATION_JSON)
                             .body(Mono.just(oxfordDictionariesResponse), new ParameterizedTypeReference<>(){})
                 )
-                .onErrorResume(HttpClientErrorException.class, httpClientErrorException -> Mono.just(ServerResponse
+                .onErrorResume(HttpClientErrorException.class, httpClientErrorException -> ServerResponse
                         .status(httpClientErrorException.getStatusCode().value())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(Mono.just(httpClientErrorException.getResponseBodyAsString()), new ParameterizedTypeReference<Mono<Object>>(){}))
-                ).onErrorResume(RequestEntityBuilderException.class, e -> Mono.just(ServerResponse
+                        .body(Mono.just(httpClientErrorException.getResponseBodyAsString()), new ParameterizedTypeReference<Mono<Object>>(){})
+                ).onErrorResume(RequestEntityBuilderException.class, e -> ServerResponse
                         .status(500)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(Mono.just(e.getMessage()), new ParameterizedTypeReference<Mono<Object>>(){})));
+                        .body(Mono.just(e.getMessage()), new ParameterizedTypeReference<Mono<Object>>(){})
+                );
     }
 }

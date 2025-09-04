@@ -2,29 +2,41 @@ package dev.unjinxed.unjinxedmicroservices.adaptors.httpclientbase;
 
 
 import dev.unjinxed.unjinxedmicroservices.adaptors.httpclientbase.utils.RequestEntityBuilder;
+import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.server.WebServerException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 
+@EqualsAndHashCode(callSuper = true)
+@Slf4j
 public class HttpClientBase extends RequestEntityBuilder {
+    @Qualifier("webClient")
     @Autowired
-    @Qualifier("restTemplate")
-    RestTemplate restTemplate;
+    WebClient webClient;
 
-
-    public <T> Mono<ResponseEntity<T>> serviceCallOut(RequestEntity request, ParameterizedTypeReference returnType) {
+    public <T, U> Mono<U> serviceCallOut(@NotNull RequestEntity<T> request, ParameterizedTypeReference<U> returnType) {
         try {
-            return Mono.just(this.restTemplate.exchange(request, returnType));
+            return webClient
+                    .method(request.getMethod())
+                    .uri(request.getUrl())
+                    .headers(httpHeaders -> httpHeaders.addAll(request.getHeaders()))
+                    .retrieve()
+                    .bodyToMono(returnType);
+
         } catch (HttpClientErrorException httpClientErrorException) {
+            log.error("HttpClientErrorException - error ", httpClientErrorException);
             return Mono.error(httpClientErrorException);
+        } catch (Exception e) {
+            log.error("Exception - error ", e);
+            return Mono.error(e);
         }
     }
 }

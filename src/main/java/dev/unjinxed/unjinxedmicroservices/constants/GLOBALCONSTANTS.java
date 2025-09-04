@@ -1,6 +1,10 @@
 package dev.unjinxed.unjinxedmicroservices.constants;
 
-public class GLOBALCONSTANTS {
+public class GlobalConstants {
+
+    private GlobalConstants() {
+        throw new IllegalStateException("Utility class; Cannot be instantiated");
+    }
 
     // RapidAPI
     public static final String X_RAPID_API_HOST_HEADER = "X-RapidAPI-Host";

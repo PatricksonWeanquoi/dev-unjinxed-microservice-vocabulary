@@ -1,7 +1,7 @@
 package dev.unjinxed.unjinxedmicroservices.components.vocabularies.services.oxforddictionaries;
 
 import dev.unjinxed.unjinxedmicroservices.components.vocabularies.models.oxforddictionaries.OxfordDictionariesResponse;
-import org.springframework.web.servlet.function.ServerResponse;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 public interface OxfordDictionariesService {
